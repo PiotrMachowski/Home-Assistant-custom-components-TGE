@@ -1,0 +1,12 @@
+{
+  "domain": "tge",
+  "name": "TGE",
+  "codeowners": ["@PiotrMachowski"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE/issues",
+  "requirements": ["requests", "beautifulsoup4"],
+  "version": "v0.0.1"
+}

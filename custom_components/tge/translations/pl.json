@@ -1,0 +1,12 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Integracja TGE jest już skonfigurowana!"
+        },
+        "step": {
+            "user": {
+                "description": "Czy chcesz skonfigurować integrację TGE?"
+            }
+        }
+    }
+}
