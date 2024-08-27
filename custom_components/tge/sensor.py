@@ -8,7 +8,7 @@ from homeassistant.const import UnitOfEnergy
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import (DOMAIN, UNIT_CURRENCY_PLN)
+from .const import (DOMAIN, UNIT_CURRENCY_PLN, ATTRIBUTE_PRICES, ATTRIBUTE_PRICES_TODAY)
 from .entity import TgeEntity
 from .update_coordinator import TgeUpdateCoordinator
 
@@ -60,7 +60,8 @@ class TgeFixing1RateSensor(TgeSensor):
         data = self.get_data()
         if data is not None:
             prices_today = list(map(lambda d: {"time": d.time, "price": d.fixing1_rate}, data.hours))
-            output["prices_today"] = prices_today
+            output[ATTRIBUTE_PRICES_TODAY] = prices_today
+            output[ATTRIBUTE_PRICES] = prices_today
         return output
 
     @property
@@ -150,7 +151,8 @@ class TgeFixing2RateSensor(TgeSensor):
         data = self.get_data()
         if data is not None:
             prices_today = list(map(lambda d: {"time": d.time, "price": d.fixing2_rate}, data.hours))
-            output["prices_today"] = prices_today
+            output[ATTRIBUTE_PRICES_TODAY] = prices_today
+            output[ATTRIBUTE_PRICES] = prices_today
         return output
 
     @property
