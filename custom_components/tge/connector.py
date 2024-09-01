@@ -1,8 +1,11 @@
 """Connector for TGE integration."""
 
+from __future__ import annotations
+
 import datetime
 import logging
 from dataclasses import dataclass
+from typing import Any
 
 import requests
 from bs4 import BeautifulSoup, ResultSet, Tag
@@ -20,11 +23,41 @@ class TgeHourData:
     fixing2_rate: float
     fixing2_volume: float
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "time": self.time.isoformat(),
+            "fixing1_rate": self.fixing1_rate,
+            "fixing1_volume": self.fixing1_volume,
+            "fixing2_rate": self.fixing2_rate,
+            "fixing2_volume": self.fixing2_volume
+        }
+
+    @staticmethod
+    def from_dict(value) -> TgeHourData:
+        time = datetime.datetime.fromisoformat(value.get("time"))
+        fixing1_rate = value.get("fixing1_rate")
+        fixing1_volume = value.get("fixing1_volume")
+        fixing2_rate = value.get("fixing2_rate")
+        fixing2_volume = value.get("fixing2_volume")
+        return TgeHourData(time, fixing1_rate, fixing1_volume, fixing2_rate, fixing2_volume)
+
 
 @dataclass
 class TgeData:
     date: datetime.date
     hours: list[TgeHourData]
+
+    @staticmethod
+    def from_dict(value: dict[str, Any]) -> TgeData:
+        date = datetime.datetime.fromisoformat(value.get("date")).date()
+        hours = [TgeHourData.from_dict(h) for h in value.get("hours")]
+        return TgeData(date, hours)
+
+    def to_dict(self):
+        return {
+            "date": self.date.isoformat(),
+            "hours": [h.to_dict() for h in self.hours]
+        }
 
 
 @dataclass

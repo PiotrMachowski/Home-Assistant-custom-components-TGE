@@ -1,12 +1,22 @@
 {
-    "config": {
-        "abort": {
-            "already_configured": "The TGE integration is already configured."
-        },
-        "step": {
-            "user": {
-                "description": "Do you want to configure the TGE integration?"
-            }
-        }
+  "config": {
+    "abort": {
+      "already_configured": "The TGE integration is already configured."
+    },
+    "step": {
+      "user": {
+        "description": "Do you want to configure the TGE integration?"
+      }
     }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Choose unit",
+        "data": {
+          "unit": "Unit"
+        }
+      }
+    }
+  }
 }

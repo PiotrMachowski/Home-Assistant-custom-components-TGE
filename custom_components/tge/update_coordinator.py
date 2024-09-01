@@ -26,8 +26,11 @@ class TgeUpdateCoordinator(DataUpdateCoordinator[TgeData]):
     def _update(self) -> TgeData:
         now = datetime.datetime.now()
         if self._should_update(now):
+            _LOGGER.debug("Updating TGE data")
             self._last_update_hour = now.hour
             self._last_data = self.connector.get_data()
+        else:
+            _LOGGER.debug("Using cached TGE data")
         return self._last_data
 
     def _should_update(self, now: datetime.datetime) -> bool:
