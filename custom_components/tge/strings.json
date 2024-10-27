@@ -11,12 +11,27 @@
   },
   "options": {
     "step": {
-      "user": {
-        "title": "Choose unit",
+      "units": {
+        "title": "Unit",
+        "description": "Choose unit of rate.",
         "data": {
           "unit": "Unit"
         }
+      },
+      "templates": {
+        "title": "Value templates",
+        "description": "You can provide your own templates to modify values retrieved from TGE.\n\nAvailable variables: \n* `fixing1_rate`\n* `fixing1_volume`\n* `fixing2_rate`\n* `fixing2_volume`\n\nTo get time of data use `now()` function.\n\n[More info about this functionality](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE?tab=readme-ov-file#value-templates)",
+        "data": {
+          "use_state_templates": "Use templates",
+          "state_template_fixing1_rate": "Value template for Fixing 1 - Rate",
+          "state_template_fixing1_volume": "Value template for Fixing 1 - Volume",
+          "state_template_fixing2_rate": "Value template for Fixing 2 - Rate",
+          "state_template_fixing2_volume": "Value template for Fixing 2 - Volume"
+        }
       }
+    },
+    "error": {
+      "invalid_template": "Invalid template"
     }
   }
 }

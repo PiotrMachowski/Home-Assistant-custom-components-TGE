@@ -53,6 +53,11 @@ You can also use following [My Home Assistant](http://my.home-assistant.io/) lin
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=tge)
 
 
+### Value templates
+
+You can override values returned by this integration by providing value templates for chosen sensors.
+This functionality is available in "Configure" menu.
+
 <!-- piotrmachowski_support_links_start -->
 
 ## Support

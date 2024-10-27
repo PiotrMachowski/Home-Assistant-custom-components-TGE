@@ -11,7 +11,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .connector import TgeHourData
 from .const import (DOMAIN, ATTRIBUTE_PRICES, ATTRIBUTE_TODAY_SUFFIX, ATTRIBUTE_TOMORROW_SUFFIX,
                     ATTRIBUTE_PARAMETER_PRICE, ATTRIBUTE_PARAMETER_VOLUME, ATTRIBUTE_VOLUMES, CONF_UNIT, UNIT_ZL_MWH,
-                    UNIT_GR_KWH)
+                    UNIT_GR_KWH, PARAMETER_FIXING_1_RATE, PARAMETER_FIXING_1_VOLUME, PARAMETER_FIXING_2_RATE,
+                    PARAMETER_FIXING_2_VOLUME)
 from .entity import TgeEntity
 from .update_coordinator import TgeUpdateCoordinator
 
@@ -98,7 +99,7 @@ class TgeFixing1RateSensor(TgeSensor):
         self._attr_suggested_display_precision = 2
         if self.native_unit_of_measurement == UNIT_GR_KWH:
             self._attr_suggested_display_precision = 3
-        self._data_parameter_name = "fixing1_rate"
+        self._data_parameter_name = PARAMETER_FIXING_1_RATE
         self._state_attribute_name = ATTRIBUTE_PRICES
         self._state_attribute_parameter_name = ATTRIBUTE_PARAMETER_PRICE
 
@@ -120,7 +121,7 @@ class TgeFixing1VolumeSensor(TgeSensor):
     def __init__(self, coordinator: TgeUpdateCoordinator, config_entry: ConfigEntry) -> None:
         super().__init__(coordinator, config_entry)
         self._attr_entity_registry_enabled_default = False
-        self._data_parameter_name = "fixing1_volume"
+        self._data_parameter_name = PARAMETER_FIXING_1_VOLUME
         self._state_attribute_name = ATTRIBUTE_VOLUMES
         self._state_attribute_parameter_name = ATTRIBUTE_PARAMETER_VOLUME
 
@@ -145,7 +146,7 @@ class TgeFixing2RateSensor(TgeSensor):
         self._attr_suggested_display_precision = 2
         if self.native_unit_of_measurement == UNIT_GR_KWH:
             self._attr_suggested_display_precision = 3
-        self._data_parameter_name = "fixing2_rate"
+        self._data_parameter_name = PARAMETER_FIXING_2_RATE
         self._state_attribute_name = ATTRIBUTE_PRICES
         self._state_attribute_parameter_name = ATTRIBUTE_PARAMETER_PRICE
 
@@ -167,7 +168,7 @@ class TgeFixing2VolumeSensor(TgeSensor):
     def __init__(self, coordinator: TgeUpdateCoordinator, config_entry: ConfigEntry) -> None:
         super().__init__(coordinator, config_entry)
         self._attr_entity_registry_enabled_default = False
-        self._data_parameter_name = "fixing2_volume"
+        self._data_parameter_name = PARAMETER_FIXING_2_VOLUME
         self._state_attribute_name = ATTRIBUTE_VOLUMES
         self._state_attribute_parameter_name = ATTRIBUTE_PARAMETER_VOLUME
 

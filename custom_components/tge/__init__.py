@@ -21,10 +21,9 @@ async def async_setup(_hass, _config):
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
-
 
     coordinator = TgeUpdateCoordinator(hass)
     await coordinator.async_refresh()
@@ -39,7 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unloaded = await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
     if unloaded:

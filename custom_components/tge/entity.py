@@ -9,10 +9,13 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.restore_state import RestoreEntity, ExtraStoredData
+from homeassistant.helpers.template import Template
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .connector import TgeData, TgeHourData
-from .const import DEFAULT_NAME, DOMAIN, URL
+from .const import DEFAULT_NAME, DOMAIN, URL, CONF_STATE_TEMPLATE_FIXING_1_RATE, CONF_STATE_TEMPLATE_FIXING_1_VOLUME, \
+    CONF_STATE_TEMPLATE_FIXING_2_RATE, CONF_STATE_TEMPLATE_FIXING_2_VOLUME, PARAMETER_FIXING_1_RATE, \
+    PARAMETER_FIXING_1_VOLUME, PARAMETER_FIXING_2_RATE, PARAMETER_FIXING_2_VOLUME
 from .update_coordinator import TgeUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,9 +59,14 @@ class TgeEntity(RestoreEntity, CoordinatorEntity):
         super().__init__(coordinator)
         self._config_entry = config_entry
         self._stored_data: TgeEntityStoredData = TgeEntityStoredData({})
+        self._calculated_data: TgeEntityStoredData = TgeEntityStoredData({})
+        self.fixing_1_rate_template = config_entry.options.get(CONF_STATE_TEMPLATE_FIXING_1_RATE, "")
+        self.fixing_1_volume_template = config_entry.options.get(CONF_STATE_TEMPLATE_FIXING_1_VOLUME, "")
+        self.fixing_2_rate_template = config_entry.options.get(CONF_STATE_TEMPLATE_FIXING_2_RATE, "")
+        self.fixing_2_volume_template = config_entry.options.get(CONF_STATE_TEMPLATE_FIXING_2_VOLUME, "")
 
     def get_data(self) -> TgeEntityStoredData | None:
-        return self._stored_data
+        return self._calculated_data
 
     @property
     def name(self) -> str:
@@ -95,6 +103,7 @@ class TgeEntity(RestoreEntity, CoordinatorEntity):
             if key < today:
                 self._stored_data.cache.pop(key)
 
+        self._calculated_data = self._calculate_stored_data(self._stored_data)
         self.async_write_ha_state()
 
     @property
@@ -108,4 +117,38 @@ class TgeEntity(RestoreEntity, CoordinatorEntity):
             self._stored_data = TgeEntityStoredData({})
         else:
             self._stored_data = TgeEntityStoredData.from_dict(last_extra_data.as_dict())
+        self._calculated_data = self._calculate_stored_data(self._stored_data)
         await super().async_added_to_hass()
+
+    def _calculate_stored_data(self, data: TgeEntityStoredData) -> TgeEntityStoredData:
+        if data.cache is None:
+            return TgeEntityStoredData({})
+        new_data = {}
+        for date, date_data in data.cache.items():
+            new_data[date] = self._calculate_all_templates(date_data)
+        return TgeEntityStoredData(new_data)
+
+    def _calculate_all_templates(self, data: TgeData) -> TgeData:
+        return TgeData(data.date, list(map(lambda h: self._calculate_templates(h), data.hours)))
+
+    def _calculate_templates(self, data: TgeHourData) -> TgeHourData:
+        templated_fixing1_rate = self._calculate_template(data, self.fixing_1_rate_template, data.fixing1_rate)
+        templated_fixing1_volume = self._calculate_template(data, self.fixing_1_volume_template, data.fixing1_volume)
+        templated_fixing2_rate = self._calculate_template(data, self.fixing_2_rate_template, data.fixing2_rate)
+        templated_fixing2_volume = self._calculate_template(data, self.fixing_2_volume_template, data.fixing2_volume)
+        return TgeHourData(data.time, templated_fixing1_rate, templated_fixing1_volume, templated_fixing2_rate,
+                           templated_fixing2_volume)
+
+    def _calculate_template(self, data: TgeHourData, template: str, default: float) -> float:
+        if template == "":
+            return default
+        now_func = lambda: data.time
+        return Template(template, self.hass).async_render(
+            {
+                PARAMETER_FIXING_1_RATE: data.fixing1_rate,
+                PARAMETER_FIXING_1_VOLUME: data.fixing1_volume,
+                PARAMETER_FIXING_2_RATE: data.fixing2_rate,
+                PARAMETER_FIXING_2_VOLUME: data.fixing2_volume,
+                "now": now_func
+            }
+        )

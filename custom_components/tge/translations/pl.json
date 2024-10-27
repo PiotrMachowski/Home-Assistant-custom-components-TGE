@@ -11,12 +11,27 @@
   },
   "options": {
     "step": {
-      "user": {
-        "title": "Wybierz jednostkę",
+      "units": {
+        "title": "Jednostka",
+        "description": "Wybierz jednostkę kursu.",
         "data": {
           "unit": "Jednostka"
         }
+      },
+      "templates": {
+        "title": "Szablony wartości",
+        "description": "Używając poniższych szablonów możesz zmodyfikować wartości odczytane z danych udostępnianych przez TGE.\n\nDostępne zmienne: \n* `fixing1_rate`\n* `fixing1_volume`\n* `fixing2_rate`\n* `fixing2_volume`\n\nCzas dla danej wartości możesz odczytać używając `now()`.\n\n[Więcej informacji na temat tej funkcjonalności](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE?tab=readme-ov-file#value-templates)",
+        "data": {
+          "use_state_templates": "Użyj szablonów",
+          "state_template_fixing1_rate": "Szablon wartości dla Fixing 1 - Kurs",
+          "state_template_fixing1_volume": "Szablon wartości dla Fixing 1 - Wolumen",
+          "state_template_fixing2_rate": "Szablon wartości dla Fixing 2 - Kurs",
+          "state_template_fixing2_volume": "Szablon wartości dla Fixing 2 - Wolumen"
+        }
       }
+    },
+    "error": {
+      "invalid_template": "Nieprawidłowy szablon"
     }
   }
 }

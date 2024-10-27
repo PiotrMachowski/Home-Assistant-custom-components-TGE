@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -33,7 +34,7 @@ class TgeHourData:
         }
 
     @staticmethod
-    def from_dict(value) -> TgeHourData:
+    def from_dict(value: dict[str, Any]) -> TgeHourData:
         time = datetime.datetime.fromisoformat(value.get("time"))
         fixing1_rate = value.get("fixing1_rate")
         fixing1_volume = value.get("fixing1_volume")
@@ -93,8 +94,11 @@ class TgeConnector:
             map(lambda row: TgeConnector._parse_row(row, date_of_data), TgeConnector._get_rows_of_table(html_parser)))
 
     @staticmethod
-    def _get_rows_of_table(html_parser: Tag) -> ResultSet[Tag]:
-        return html_parser.select("#footable_kontrakty_godzinowe > tbody")[0].select("tr")
+    def _get_rows_of_table(html_parser: Tag) -> list[Tag]:
+        valid_pattern = r"^\d\d?-\d\d?$"
+        all_rows = html_parser.select("#footable_kontrakty_godzinowe > tbody")[0].select("tr")
+        filtered_rows = list(filter(lambda r: re.match(valid_pattern, r.select("td")[0].text.strip()), all_rows))
+        return filtered_rows
 
     @staticmethod
     def _parse_row(row: Tag, date_of_data: datetime.date) -> TgeHourData:
@@ -114,20 +118,19 @@ class TgeConnector:
         return datetime_from
 
     @staticmethod
-    def _get_fixing1_rate(row: Tag) -> float:
-        return float(TgeConnector._get_column_with_number(row, 1).replace(",", "."))
-
-    @staticmethod
-    def _get_fixing1_volume(row: Tag) -> float:
-        return float(TgeConnector._get_column_with_number(row, 2).replace(",", "."))
-
-    @staticmethod
     def _get_float_from_column(row: Tag, number: int) -> float:
-        return float(TgeConnector._get_column_with_number(row, number).replace(",", "."))
+        return TgeConnector._parse_float(TgeConnector._get_column_with_number(row, number), 0)
 
     @staticmethod
     def _get_column_with_number(row: Tag, number: int) -> str:
         return row.select("td")[number].text.strip()
+
+    @staticmethod
+    def _parse_float(value: str, default: float) -> float:
+        try:
+            return float(value.replace(",", "."))
+        except ValueError:
+            return default
 
 
 if __name__ == '__main__':
