@@ -58,6 +58,8 @@ You can also use following [My Home Assistant](http://my.home-assistant.io/) lin
 You can override values returned by this integration by providing value templates for chosen sensors.
 This functionality is available in "Configure" menu.
 
+[Example templates](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE/discussions/categories/price-templates)
+
 <!-- piotrmachowski_support_links_start -->
 
 ## Support
