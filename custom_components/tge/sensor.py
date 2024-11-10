@@ -11,8 +11,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .connector import TgeHourData
 from .const import (DOMAIN, ATTRIBUTE_PRICES, ATTRIBUTE_TODAY_SUFFIX, ATTRIBUTE_TOMORROW_SUFFIX,
                     ATTRIBUTE_PARAMETER_PRICE, ATTRIBUTE_PARAMETER_VOLUME, ATTRIBUTE_VOLUMES, CONF_UNIT, UNIT_ZL_MWH,
-                    UNIT_GR_KWH, PARAMETER_FIXING_1_RATE, PARAMETER_FIXING_1_VOLUME, PARAMETER_FIXING_2_RATE,
-                    PARAMETER_FIXING_2_VOLUME)
+                    UNIT_GR_KWH, UNIT_ZL_KWH, PARAMETER_FIXING_1_RATE, PARAMETER_FIXING_1_VOLUME,
+                    PARAMETER_FIXING_2_RATE, PARAMETER_FIXING_2_VOLUME)
 from .entity import TgeEntity
 from .update_coordinator import TgeUpdateCoordinator
 
@@ -42,6 +42,8 @@ class TgeSensor(TgeEntity, SensorEntity):
         value = getattr(data, self._data_parameter_name)
         if self.native_unit_of_measurement == UNIT_GR_KWH:
             value = round(value / 10, 3)
+        elif self.native_unit_of_measurement == UNIT_ZL_KWH:
+            value = round(value / 1000, 5)
         return value
 
     @property
@@ -99,6 +101,8 @@ class TgeFixing1RateSensor(TgeSensor):
         self._attr_suggested_display_precision = 2
         if self.native_unit_of_measurement == UNIT_GR_KWH:
             self._attr_suggested_display_precision = 3
+        elif self.native_unit_of_measurement == UNIT_ZL_KWH:
+            self._attr_suggested_display_precision = 5
         self._data_parameter_name = PARAMETER_FIXING_1_RATE
         self._state_attribute_name = ATTRIBUTE_PRICES
         self._state_attribute_parameter_name = ATTRIBUTE_PARAMETER_PRICE
@@ -146,6 +150,8 @@ class TgeFixing2RateSensor(TgeSensor):
         self._attr_suggested_display_precision = 2
         if self.native_unit_of_measurement == UNIT_GR_KWH:
             self._attr_suggested_display_precision = 3
+        elif self.native_unit_of_measurement == UNIT_ZL_KWH:
+            self._attr_suggested_display_precision = 5
         self._data_parameter_name = PARAMETER_FIXING_2_RATE
         self._state_attribute_name = ATTRIBUTE_PRICES
         self._state_attribute_parameter_name = ATTRIBUTE_PARAMETER_PRICE

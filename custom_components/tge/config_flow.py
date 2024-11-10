@@ -10,7 +10,7 @@ from homeassistant.core import callback
 from homeassistant.helpers.selector import selector, TemplateSelectorConfig, TemplateSelector
 from homeassistant.helpers.template import Template
 
-from .const import DOMAIN, CONF_UNIT, UNIT_ZL_MWH, UNIT_GR_KWH, CONF_STATE_TEMPLATE_FIXING_1_RATE, \
+from .const import DOMAIN, CONF_UNIT, UNIT_ZL_MWH, UNIT_GR_KWH, UNIT_ZL_KWH, CONF_STATE_TEMPLATE_FIXING_1_RATE, \
     CONF_STATE_TEMPLATE_FIXING_2_RATE, CONF_STATE_TEMPLATE_FIXING_1_VOLUME, CONF_STATE_TEMPLATE_FIXING_2_VOLUME, \
     PARAMETER_FIXING_1_RATE, PARAMETER_FIXING_1_VOLUME, PARAMETER_FIXING_2_RATE, PARAMETER_FIXING_2_VOLUME, \
     CONF_USE_STATE_TEMPLATES
@@ -44,8 +44,9 @@ class TgeOptionsFlowHandler(config_entries.OptionsFlow):
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
 
-    async def async_step_init(self, user_input: dict[
-                                                    str, Any] | None = None) -> ConfigFlowResult:  # pylint: disable=unused-argument
+    async def async_step_init(
+            self,
+            _: dict[str, Any] | None = None) -> ConfigFlowResult:  # pylint: disable=unused-argument
         """Manage the options."""
         return await self.async_step_units()
 
@@ -60,14 +61,14 @@ class TgeOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Required(CONF_UNIT, default=self.options.get(CONF_UNIT, UNIT_ZL_MWH)): selector(
                     {"select": {"options": [
                         {"label": UNIT_ZL_MWH, "value": UNIT_ZL_MWH},
-                        {"label": UNIT_GR_KWH, "value": UNIT_GR_KWH}
+                        {"label": UNIT_GR_KWH, "value": UNIT_GR_KWH},
+                        {"label": UNIT_ZL_KWH, "value": UNIT_ZL_KWH}
                     ]}}),
             })
         )
 
     async def async_step_templates(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         errors = {}
-        _LOGGER.error(f"OPTIONS: {user_input}")
         if user_input is not None:
             for template_conf_key in [CONF_STATE_TEMPLATE_FIXING_1_RATE, CONF_STATE_TEMPLATE_FIXING_2_RATE,
                                       CONF_STATE_TEMPLATE_FIXING_1_VOLUME, CONF_STATE_TEMPLATE_FIXING_2_VOLUME]:
