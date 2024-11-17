@@ -60,6 +60,58 @@ This functionality is available in "Configure" menu.
 
 [Example templates](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE/discussions/categories/price-templates)
 
+### Displaying the data
+
+You can display the data using [ApexCharts card](https://github.com/RomRider/apexcharts-card) using following configs:
+
+* Data for today:
+  ```yaml
+  type: custom:apexcharts-card
+  graph_span: 24h
+  span:
+    start: day
+  header:
+    show: true
+    title: TGE Fixing 1 Today [zł/MWh]
+  now:
+    show: true
+    label: Now
+  series:
+    - entity: sensor.tge_fixing_1_rate
+      type: column
+      name: Fixing 1
+      float_precision: 2
+      data_generator: |
+        return entity.attributes.prices_today.map((val, index) => {
+          return [new Date(val["time"]), val['price']];
+        });
+  ```
+* Data for tomorrow:
+  ```yaml
+  type: custom:apexcharts-card
+  graph_span: 24h
+  span:
+    start: day
+    offset: +1d
+  header:
+    show: true
+    title: TGE Fixing 1 Tomorrow [zł/MWh]
+  now:
+    show: true
+    label: Now
+  series:
+    - entity: sensor.tge_fixing_1_rate
+      type: column
+      name: Fixing 1
+      float_precision: 2
+      data_generator: |
+        return entity.attributes.prices_tomorrow.map((val, index) => {
+          return [new Date(val['time']), val['price']];
+        });
+
+  ```
+
+
 <!-- piotrmachowski_support_links_start -->
 
 ## Support
