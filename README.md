@@ -83,7 +83,7 @@ You can display the data using [ApexCharts card](https://github.com/RomRider/ape
       float_precision: 2
       data_generator: |
         return entity.attributes.prices_today.map((val, index) => {
-          return [new Date(val["time"]), val['price']];
+          return [new Date(val['time']), val['price']];
         });
   ```
 * Data for tomorrow:
