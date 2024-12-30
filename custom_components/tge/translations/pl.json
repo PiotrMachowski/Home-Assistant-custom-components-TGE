@@ -20,7 +20,7 @@
       },
       "templates": {
         "title": "Szablony wartości",
-        "description": "Używając poniższych szablonów możesz zmodyfikować wartości odczytane z danych udostępnianych przez TGE.\n\nDostępne zmienne: \n* `fixing1_rate`\n* `fixing1_volume`\n* `fixing2_rate`\n* `fixing2_volume`\n\nCzas dla danej wartości możesz odczytać używając `now()`.\n\n[Więcej informacji na temat tej funkcjonalności](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE?tab=readme-ov-file#value-templates)",
+        "description": "Używając poniższych szablonów możesz zmodyfikować wartości odczytane z danych udostępnianych przez TGE.\n\nDostępne zmienne: \n* `fixing1_rate`\n* `fixing1_volume`\n* `fixing2_rate`\n* `fixing2_volume`\n\nCzas dla danej wartości możesz odczytać używając `now()`.\n\nUWAGA: obliczenia są dokonywane w zł/MWh oraz MWh - rezultaty szablonów powinny być w tych samych jednostkach. Konwersja do jednostek skonfigurowanych w poprzednim kroku jest dokonywana automatycznie w późniejszym etapie przetwarzania danych.\n\n[Więcej informacji na temat tej funkcjonalności](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE?tab=readme-ov-file#value-templates)",
         "data": {
           "use_state_templates": "Użyj szablonów",
           "state_template_fixing1_rate": "Szablon wartości dla Fixing 1 - Kurs",

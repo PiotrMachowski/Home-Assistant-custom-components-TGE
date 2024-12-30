@@ -58,6 +58,8 @@ You can also use following [My Home Assistant](http://my.home-assistant.io/) lin
 You can override values returned by this integration by providing value templates for chosen sensors.
 This functionality is available in "Configure" menu.
 
+WARNING: calculations are performed using zł/MWh and MWh - templates should return values using the same units. Conversion to units configured in the previous step is performed automatically in the later steps of data processing.
+
 [Example templates](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE/discussions/categories/price-templates)
 
 ### Displaying the data

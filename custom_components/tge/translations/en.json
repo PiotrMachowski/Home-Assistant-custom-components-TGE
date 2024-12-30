@@ -20,7 +20,7 @@
       },
       "templates": {
         "title": "Value templates",
-        "description": "You can provide your own templates to modify values retrieved from TGE.\n\nAvailable variables: \n* `fixing1_rate`\n* `fixing1_volume`\n* `fixing2_rate`\n* `fixing2_volume`\n\nTo get time of data use `now()` function.\n\n[More info about this functionality](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE?tab=readme-ov-file#value-templates)",
+        "description": "You can provide your own templates to modify values retrieved from TGE.\n\nAvailable variables: \n* `fixing1_rate`\n* `fixing1_volume`\n* `fixing2_rate`\n* `fixing2_volume`\n\nTo get time of data use `now()` function.\n\nWARNING: calculations are performed using zł/MWh and MWh - templates should return values using the same units. Conversion to units configured in the previous step is performed automatically in the later steps of data processing.\n\n[More info about this functionality](https://github.com/PiotrMachowski/Home-Assistant-custom-components-TGE?tab=readme-ov-file#value-templates)",
         "data": {
           "use_state_templates": "Use templates",
           "state_template_fixing1_rate": "Value template for Fixing 1 - Rate",
