@@ -76,7 +76,7 @@ class TgeConnector:
     @staticmethod
     def get_data() -> TgeData:
         data_for_today = TgeConnector.get_data_for_date(datetime.date.today())
-        data_for_tomorrow = TgeConnector.get_data_for_date(datetime.date.today() - datetime.timedelta(days=1))
+        data_for_tomorrow = TgeConnector.get_data_for_date(datetime.date.today() + datetime.timedelta(days=1))
         data = [d for d in [data_for_today, data_for_tomorrow] if d is not None]
         return TgeData(data)
 
