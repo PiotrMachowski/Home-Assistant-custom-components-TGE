@@ -7,6 +7,7 @@ DOMAIN: Final = "tge"
 DEFAULT_NAME: Final = "TGE"
 DEFAULT_UPDATE_INTERVAL: Final = timedelta(minutes=1)
 URL: Final = 'https://tge.pl/energia-elektryczna-rdn'
+DATA_URL_TEMPLATE: Final = URL + "?dateShow={}"
 
 ATTRIBUTE_TODAY_SUFFIX: Final = "_today"
 ATTRIBUTE_TOMORROW_SUFFIX: Final = "_tomorrow"

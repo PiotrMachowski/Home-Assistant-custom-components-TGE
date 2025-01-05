@@ -9,9 +9,9 @@ from dataclasses import dataclass
 from typing import Any
 
 import requests
-from bs4 import BeautifulSoup, ResultSet, Tag
+from bs4 import BeautifulSoup, Tag
 
-from .const import URL
+from .const import DATA_URL_TEMPLATE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,21 +44,26 @@ class TgeHourData:
 
 
 @dataclass
-class TgeData:
+class TgeDayData:
     date: datetime.date
     hours: list[TgeHourData]
 
     @staticmethod
-    def from_dict(value: dict[str, Any]) -> TgeData:
+    def from_dict(value: dict[str, Any]) -> TgeDayData:
         date = datetime.datetime.fromisoformat(value.get("date")).date()
         hours = [TgeHourData.from_dict(h) for h in value.get("hours")]
-        return TgeData(date, hours)
+        return TgeDayData(date, hours)
 
     def to_dict(self):
         return {
             "date": self.date.isoformat(),
             "hours": [h.to_dict() for h in self.hours]
         }
+
+
+@dataclass
+class TgeData:
+    data: list[TgeDayData]
 
 
 @dataclass
@@ -70,16 +75,25 @@ class TgeConnector:
 
     @staticmethod
     def get_data() -> TgeData:
-        _LOGGER.debug("Downloading TGE data...")
-        response = requests.get(URL)
-        _LOGGER.debug("Downloaded TGE data {}: {}", response.status_code, response.text)
+        data_for_today = TgeConnector.get_data_for_date(datetime.date.today())
+        data_for_tomorrow = TgeConnector.get_data_for_date(datetime.date.today() - datetime.timedelta(days=1))
+        data = [d for d in [data_for_today, data_for_tomorrow] if d is not None]
+        return TgeData(data)
+
+    @staticmethod
+    def get_data_for_date(date: datetime.date) -> TgeDayData | None:
+        _LOGGER.debug("Downloading TGE data for date {}...", date)
+        response = requests.get(DATA_URL_TEMPLATE.format((date - datetime.timedelta(days=1)).strftime("%d-%m-%Y")))
+        _LOGGER.debug("Downloaded TGE data for date {} [{}]: {}", date, response.status_code, response.text)
         if response.status_code != 200:
             _LOGGER.error("Failed to download TGE data: {}", response.status_code)
             raise TgeException("Failed to download TGE data")
         parser = BeautifulSoup(response.text, "html.parser")
-        date = TgeConnector._get_date_of_data(parser)
+        date_of_data = TgeConnector._get_date_of_data(parser)
+        if date != date_of_data:
+            return None
         data = TgeConnector._parse_timetable(parser, date)
-        return TgeData(date, data)
+        return TgeDayData(date, data)
 
     @staticmethod
     def _get_date_of_data(html_parser: Tag) -> datetime.date:

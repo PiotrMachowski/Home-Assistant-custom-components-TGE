@@ -12,7 +12,7 @@ from homeassistant.helpers.restore_state import RestoreEntity, ExtraStoredData
 from homeassistant.helpers.template import Template
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .connector import TgeData, TgeHourData
+from .connector import TgeData, TgeHourData, TgeDayData
 from .const import DEFAULT_NAME, DOMAIN, URL, CONF_STATE_TEMPLATE_FIXING_1_RATE, CONF_STATE_TEMPLATE_FIXING_1_VOLUME, \
     CONF_STATE_TEMPLATE_FIXING_2_RATE, CONF_STATE_TEMPLATE_FIXING_2_VOLUME, PARAMETER_FIXING_1_RATE, \
     PARAMETER_FIXING_1_VOLUME, PARAMETER_FIXING_2_RATE, PARAMETER_FIXING_2_VOLUME
@@ -23,7 +23,7 @@ _LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class TgeEntityStoredData(ExtraStoredData):
-    cache: dict[datetime.date, TgeData] | None = None
+    cache: dict[datetime.date, TgeDayData] | None = None
 
     def as_dict(self) -> dict[str, Any]:
         if self.cache is None:
@@ -48,7 +48,7 @@ class TgeEntityStoredData(ExtraStoredData):
         parsed = {}
         for k, v in cache.items():
             date = datetime.date.fromisoformat(k)
-            value = TgeData.from_dict(v)
+            value = TgeDayData.from_dict(v)
             parsed[date] = value
         return TgeEntityStoredData(parsed)
 
@@ -97,9 +97,11 @@ class TgeEntity(RestoreEntity, CoordinatorEntity):
         last_data: TgeData | None = self.coordinator.data
         if last_data is None:
             return
-        self._stored_data.cache[last_data.date] = last_data
+        for day_data in last_data.data:
+            self._stored_data.cache[day_data.date] = day_data
         _LOGGER.debug("cleaning up: {}", self._stored_data.cache)
-        for key in self._stored_data.cache.keys():
+        keys = [*self._stored_data.cache.keys()]
+        for key in keys:
             if key < today:
                 self._stored_data.cache.pop(key)
 
@@ -128,8 +130,8 @@ class TgeEntity(RestoreEntity, CoordinatorEntity):
             new_data[date] = self._calculate_all_templates(date_data)
         return TgeEntityStoredData(new_data)
 
-    def _calculate_all_templates(self, data: TgeData) -> TgeData:
-        return TgeData(data.date, list(map(lambda h: self._calculate_templates(h), data.hours)))
+    def _calculate_all_templates(self, data: TgeDayData) -> TgeDayData:
+        return TgeDayData(data.date, list(map(lambda h: self._calculate_templates(h), data.hours)))
 
     def _calculate_templates(self, data: TgeHourData) -> TgeHourData:
         templated_fixing1_rate = self._calculate_template(data, self.fixing_1_rate_template, data.fixing1_rate)
