@@ -142,7 +142,7 @@ class TgeConnector:
     @staticmethod
     def _parse_float(value: str, default: float) -> float:
         try:
-            return float(value.replace(",", "."))
+            return float(value.replace(" ", "").replace(",", "."))
         except ValueError:
             return default
 
