@@ -101,7 +101,7 @@ class TgeConnector:
                                  map(lambda ft: re.findall(r"\d{2}-\d{2}-\d{4}", ft),
                                      filter(lambda t: "godzinowe" in t,
                                             map(lambda h: h.get_text(strip=True),
-                                                parser.select(".kontrakt-date")
+                                                html_parser.select(".kontrakt-date")
                                                 )
                                             )
                                      )
