@@ -97,10 +97,16 @@ class TgeConnector:
 
     @staticmethod
     def _get_date_of_data(html_parser: Tag) -> datetime.date:
-        date_text = html_parser.select("body")[0].select("section")[4].select("small")[0].text.strip().replace(
-            "dla dostawy w dniu ", "")
-        date = datetime.datetime.strptime(date_text, "%d-%m-%Y").date()
-        return date
+        # Search for small in h4 in 4-th 'section' of body
+        el = html_parser.select_one("body > section:nth-of-type(4) h4 small")
+        if el is None:
+            raise TgeException("Date of delivery not found on TGE website")
+        # np. el.text == "dla dostawy w dniu 08-08-2025 r."
+        # Remove prefix and " r."
+        date_text = el.get_text(strip=True) \
+            .replace("dla dostawy w dniu ", "") \
+            .replace(" r.", "") 
+        return datetime.datetime.strptime(date_text, "%d-%m-%Y").date()
 
     @staticmethod
     def _parse_timetable(html_parser: Tag, date_of_data: datetime.date) -> list[TgeHourData]:
