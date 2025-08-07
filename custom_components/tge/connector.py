@@ -97,9 +97,20 @@ class TgeConnector:
 
     @staticmethod
     def _get_date_of_data(html_parser: Tag) -> datetime.date:
-        date_text = html_parser.select("body")[0].select("section")[4].select("small")[0].text.strip().replace(
-            "dla dostawy w dniu ", "")
-        date = datetime.datetime.strptime(date_text, "%d-%m-%Y").date()
+        date_texts = list(filter(lambda l: len(l) > 0,
+                                 map(lambda ft: re.findall(r"\d{2}-\d{2}-\d{4}", ft),
+                                     filter(lambda t: "godzinowe" in t,
+                                            map(lambda h: h.get_text(strip=True),
+                                                parser.select(".kontrakt-date")
+                                                )
+                                            )
+                                     )
+                                 )
+                          )
+        if len(date_texts) == 0:
+            _LOGGER.error("No date of data found")
+            raise TgeException("No date of data found")
+        date = datetime.datetime.strptime(date_texts[0][0], "%d-%m-%Y").date()
         return date
 
     @staticmethod
