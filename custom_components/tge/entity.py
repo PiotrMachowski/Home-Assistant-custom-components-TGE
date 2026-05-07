@@ -141,7 +141,7 @@ class TgeEntity(RestoreEntity, CoordinatorEntity):
         return TgeHourData(data.time, templated_fixing1_rate, templated_fixing1_volume, templated_fixing2_rate,
                            templated_fixing2_volume)
 
-    def _calculate_template(self, data: TgeHourData, template: str, default: float) -> float:
+    def _calculate_template(self, data: TgeHourData, template: str, default: float | None) -> float | None:
         if template == "":
             return default
         now_func = lambda: data.time
