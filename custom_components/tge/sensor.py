@@ -38,8 +38,10 @@ class TgeSensor(TgeEntity, SensorEntity):
     def __init__(self, coordinator: TgeUpdateCoordinator, config_entry: ConfigEntry) -> None:
         super().__init__(coordinator, config_entry)
 
-    def get_parameter_value(self, data: TgeHourData) -> float:
+    def get_parameter_value(self, data: TgeHourData) -> float | None:
         value = getattr(data, self._data_parameter_name)
+        if value is None:
+            return None
         if self.native_unit_of_measurement == UNIT_GR_KWH:
             value = round(value / 10, 3)
         elif self.native_unit_of_measurement == UNIT_ZL_KWH:
@@ -83,7 +85,15 @@ class TgeSensor(TgeEntity, SensorEntity):
 
     @property
     def available(self) -> bool:
-        return super().available and self.get_data() is not None
+        if not super().available:
+            return False
+        data = self.get_data()
+        if data is None:
+            return False
+        # If a parameter is missing for all hours (e.g., Fixing II not published),
+        # mark the sensor unavailable.
+        values = [getattr(h, self._data_parameter_name) for h in data.combined_hours()]
+        return any(v is not None for v in values)
 
     @property
     def unique_id(self) -> str:
