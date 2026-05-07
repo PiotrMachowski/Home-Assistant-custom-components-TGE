@@ -33,21 +33,18 @@ class TgeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> TgeOptionsFlowHandler:
-        return TgeOptionsFlowHandler(config_entry)
+        return TgeOptionsFlowHandler()
 
 
 # noinspection PyTypeChecker
 class TgeOptionsFlowHandler(config_entries.OptionsFlow):
     """TGE config flow options handler."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        self.config_entry = config_entry
-        self.options = dict(config_entry.options)
-
     async def async_step_init(
             self,
             _: dict[str, Any] | None = None) -> ConfigFlowResult:  # pylint: disable=unused-argument
         """Manage the options."""
+        self.options = dict(self.config_entry.options)
         return await self.async_step_units()
 
     async def async_step_units(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
