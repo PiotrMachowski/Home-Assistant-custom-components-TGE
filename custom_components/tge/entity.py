@@ -99,7 +99,7 @@ class TgeEntity(RestoreEntity, CoordinatorEntity):
             return
         for day_data in last_data.data:
             self._stored_data.cache[day_data.date] = day_data
-        _LOGGER.debug("cleaning up: {}", self._stored_data.cache)
+        _LOGGER.debug("cleaning up: %s", self._stored_data.cache)
         keys = [*self._stored_data.cache.keys()]
         for key in keys:
             if key < today:
@@ -114,7 +114,7 @@ class TgeEntity(RestoreEntity, CoordinatorEntity):
 
     async def async_added_to_hass(self) -> None:
         last_extra_data = await self.async_get_last_extra_data()
-        _LOGGER.debug("Restored last data: {}", last_extra_data)
+        _LOGGER.debug("Restored last data: %s", last_extra_data)
         if last_extra_data is None:
             self._stored_data = TgeEntityStoredData({})
         else:

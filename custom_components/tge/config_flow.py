@@ -33,12 +33,15 @@ class TgeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> TgeOptionsFlowHandler:
-        return TgeOptionsFlowHandler()
+        return TgeOptionsFlowHandler(config_entry)
 
 
 # noinspection PyTypeChecker
 class TgeOptionsFlowHandler(config_entries.OptionsFlow):
     """TGE config flow options handler."""
+
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        super().__init__(config_entry)
 
     async def async_step_init(
             self,

@@ -100,15 +100,17 @@ class TgeConnector:
 
     @staticmethod
     def get_data_for_date(date: datetime.date) -> TgeDayData | None:
-        _LOGGER.debug("Downloading TGE data for date {}...", date)
+        _LOGGER.debug("Downloading TGE data for date %s...", date)
         response = requests.get(
             DATA_URL_TEMPLATE.format((date - datetime.timedelta(days=1)).strftime("%d-%m-%Y")),
             headers=_BROWSER_HEADERS,
             timeout=30,
         )
-        _LOGGER.debug("Downloaded TGE data for date {} [{}]", date, response.status_code)
+        _LOGGER.debug(
+            "Downloaded TGE data for date %s [%s]", date, response.status_code
+        )
         if response.status_code != 200:
-            _LOGGER.error("Failed to download TGE data: {}", response.status_code)
+            _LOGGER.error("Failed to download TGE data: %s", response.status_code)
             raise TgeException("Failed to download TGE data")
         parser = BeautifulSoup(response.text, "html.parser")
         date_of_data = TgeConnector._get_date_of_data(parser)
